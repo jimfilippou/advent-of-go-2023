@@ -7,7 +7,13 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/BurntSushi/toml"
 )
+
+type Configuration struct {
+	ReplaceWordsWithDigits bool
+}
 
 func getCalibration(line string) int {
 
@@ -58,8 +64,15 @@ func getCalibration(line string) int {
 }
 
 func main() {
+	// Load configuration
+	var conf Configuration
+	if _, err := toml.DecodeFile("config.toml", &conf); err != nil {
+		log.Fatalf("unable to load configuration: %v", err)
+		return
+	}
+
 	fmt.Println("Advent of Code 2023 - Day 1")
-	file, err := ioutil.ReadFile("/Users/jimfilippou/Desktop/advent-of-code-2023/day1/input.txt")
+	file, err := ioutil.ReadFile("input.txt")
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
 		return
@@ -73,7 +86,26 @@ func main() {
 
 	// Iterate over the lines
 	for _, line := range lines {
+		fmt.Printf(`
+			Line before: %s
+			Calibration before: %d
+		`, line, getCalibration(line))
+		if conf.ReplaceWordsWithDigits {
+			line = strings.ReplaceAll(line, "one", "o1e")
+			line = strings.ReplaceAll(line, "two", "t2o")
+			line = strings.ReplaceAll(line, "three", "t3e")
+			line = strings.ReplaceAll(line, "four", "4")
+			line = strings.ReplaceAll(line, "five", "5e")
+			line = strings.ReplaceAll(line, "six", "6")
+			line = strings.ReplaceAll(line, "seven", "7n")
+			line = strings.ReplaceAll(line, "eight", "e8t")
+			line = strings.ReplaceAll(line, "nine", "n9e")
+		}
 		calibration := getCalibration(line)
+		fmt.Printf(`
+			Line after: %s
+			Calibration after: %d
+		`, line, calibration)
 		total += calibration
 	}
 
