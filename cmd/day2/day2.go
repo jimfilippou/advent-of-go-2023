@@ -63,7 +63,6 @@ func parseLine(line string) Game {
 		}
 		game.sets = append(game.sets, set)
 	}
-	fmt.Println(game)
 	return game
 }
 
@@ -85,5 +84,18 @@ func main() {
 		blue:  14,
 	}
 
-	gameIdsThatMatch := make([]int, 0)
+	// All the games that fail the test
+	fails := make([]int, 0)
+
+	// Loop through all games
+	for _, game := range games {
+		for _, set := range game.sets {
+			if set.blue > bag.blue || set.red > bag.red || set.green > bag.green {
+				fails = append(fails, game.id)
+				break
+			}
+		}
+	}
+
+	fmt.Println(fails)
 }
