@@ -68,8 +68,8 @@ func parseLine(line string) Game {
 
 func main() {
 	// Read the input file
-	gamesFile, err := os.ReadFile("input.txt")
-	utils.CheckError(err)
+	dir, _ := os.Getwd()
+	gamesFile, _ := os.ReadFile(dir + "/cmd/day2/input.txt")
 	lines := strings.Split(string(gamesFile), "\n")
 	games := make([]Game, len(lines))
 	// Parse all games to a slice of Game objects
@@ -84,7 +84,6 @@ func main() {
 		blue:  14,
 	}
 
-	// All the games that fail the test
 	fails := make([]int, 0)
 
 	// Loop through all games
@@ -97,5 +96,25 @@ func main() {
 		}
 	}
 
-	fmt.Println(fails)
+	validGames := make([]Game, 0)
+	for _, game := range games {
+		// Check if the game is in the fails list
+		found := false
+		for _, fail := range fails {
+			if game.id == fail {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+		// Game is not included in list, so it's valid
+		validGames = append(validGames, game)
+	}
+
+	sum := 0
+	for _, game := range validGames {
+		sum += game.id
+	}
 }

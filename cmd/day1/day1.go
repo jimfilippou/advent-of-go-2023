@@ -1,14 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/BurntSushi/toml"
 )
 
 type Configuration struct {
@@ -64,15 +64,10 @@ func getCalibration(line string) int {
 }
 
 func main() {
-	// Load configuration
-	var conf Configuration
-	if _, err := toml.DecodeFile("config.toml", &conf); err != nil {
-		log.Fatalf("unable to load configuration: %v", err)
-		return
-	}
-
-	fmt.Println("Advent of Code 2023 - Day 1")
-	file, err := ioutil.ReadFile("input.txt")
+	replaceStringsWithDigits := flag.Bool("replace", false, "Replace words with digits")
+	flag.Parse()
+	dir, _ := os.Getwd()
+	file, err := ioutil.ReadFile(dir + "/cmd/day1/input.txt")
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
 		return
@@ -90,7 +85,7 @@ func main() {
 			Line before: %s
 			Calibration before: %d
 		`, line, getCalibration(line))
-		if conf.ReplaceWordsWithDigits {
+		if *replaceStringsWithDigits {
 			line = strings.ReplaceAll(line, "one", "o1e")
 			line = strings.ReplaceAll(line, "two", "t2o")
 			line = strings.ReplaceAll(line, "three", "t3e")
